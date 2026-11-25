@@ -46,15 +46,15 @@ export const keys: Key[] = [
   { t: 0, pos: [30, 62, Z(-52)], look: [0, -3, Z(32)], fov: 42, blend: 0 },
   { t: 4.6, pos: [22, 44, Z(-40)], look: [0, -3, Z(26)] },
   // 5–17 s: descend onto the critical line and glide up it
-  { t: 8.2, pos: [0, 2.6, Z(1.5)], look: [0, -0.4, Z(13)], fov: 50, ease: 'linear' },
-  { t: 12.5, pos: [0, 2.0, Z(29)], look: [0, -0.6, Z(40)], ease: 'linear' },
-  { t: 17, pos: [0, 2.0, Z(58)], look: [0, -0.6, Z(69)], ease: 'linear' },
+  { t: 8.2, pos: [0, 3.6, Z(1.5)], look: [0, -0.8, Z(15)], fov: 50, ease: 'linear' },
+  { t: 12.5, pos: [0, 3.4, Z(29)], look: [0, -0.8, Z(42)], ease: 'linear' },
+  { t: 17, pos: [0, 3.4, Z(58)], look: [0, -0.8, Z(71)], ease: 'linear' },
   // 17–22 s: keep gliding while the Z(t) curve takes the stage
-  { t: 21.6, pos: [0, 2.2, Z(88)], look: [0, -0.5, Z(99)] },
+  { t: 21.6, pos: [0, 3.6, Z(88)], look: [0, -0.8, Z(101)] },
   // 22–30 s: pull up and back; the landscape shrinks into the Main.lean star
   { t: 24.6, pos: [8, 30, Z(132)], look: [0, 0, 0], fov: 50, blend: 0 },
-  { t: 28.4, pos: [26, 74, 150], look: [0, 0, 0], blend: 1 },
-  { t: 31, pos: [92, 96, 236], look: [-6, 0, 20] },
+  { t: 28.4, pos: [18, 46, 96], look: [0, 0, 0], blend: 1 },
+  { t: 31, pos: [62, 44, 122], look: [-6, 0, 14] },
   // 30–40 s: fly through the galaxy into Development/AbelianVarietyTheory
   { t: 35, pos: [8, 22, 96], look: [-14, 0, 19], fov: 58 },
   { t: 38.6, pos: [-13, 2, 34], look: [-18, -1, 6] },

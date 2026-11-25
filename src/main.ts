@@ -84,6 +84,7 @@ export class App {
     document.body.classList.toggle('story', params.story);
     document.body.classList.toggle('hideui', params.hideui);
     document.body.classList.toggle('capture', params.capture);
+    document.body.classList.toggle('aspect-4x5', params.aspect === '4x5');
   }
 
   async init(): Promise<void> {

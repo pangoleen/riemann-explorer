@@ -85,7 +85,8 @@
       <div id="leancard" aria-hidden="true">
         <div class="lc-file">Mathlib/NumberTheory/LSeries/RiemannZeta.lean</div>
 <pre><span class="kw">def</span> <span class="nm">RiemannHypothesis</span> : <span class="ty">Prop</span> :=
-  ∀ (s : ℂ) (_ : riemannZeta s = 0) (_ : ¬∃ n : ℕ, s = -2 * (n + 1)) (_ : s ≠ 1),
+  ∀ (s : ℂ) (_ : riemannZeta s = 0)
+    (_ : ¬∃ n : ℕ, s = -2 * (n + 1)) (_ : s ≠ 1),
     s.re = 1 / 2</pre>
         <div class="lc-proof"><span class="kw">theorem</span> <span class="nm">riemannHypothesis</span> : <span class="ty">RiemannHypothesis</span> := rhOfAll</div>
         <div class="lc-src">src/Main.lean · Alpöge, with Claude · 20 Nov 2026</div>
