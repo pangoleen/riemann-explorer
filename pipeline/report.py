@@ -252,7 +252,7 @@ def main() -> None:
     w("")
     w("The submission has no license. `public/data/` holds only derived metadata: module paths, line counts, "
       "import edges, declaration names and kinds, and statement snippets of at most three lines "
-      "(whitespace collapsed, at most 180 characters). The app links to GitHub at the pinned commit for source.")
+      "(whitespace collapsed, at most 182 characters). The app links to GitHub at the pinned commit for source.")
     (ROOT / "pipeline" / "REPORT.md").write_text("\n".join(L) + "\n")
     print("wrote pipeline/REPORT.md and public/data/stats.json")
 

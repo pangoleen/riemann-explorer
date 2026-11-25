@@ -112,7 +112,7 @@ Our angle is the cinematic link between the function and the proof.
 
 ## License caveat
 
-The Lean submission was published without a license. This repository and the deployed site ship **no `.lean` sources**. `public/data/` holds only derived metadata: module paths, line counts, import edges, declaration names and kinds, and statement snippets of at most three lines (whitespace collapsed, at most 180 characters). The side panel links to GitHub at the pinned commit for the full source.
+The Lean submission was published without a license. This repository and the deployed site ship **no `.lean` sources**. `public/data/` holds only derived metadata: module paths, line counts, import edges, declaration names and kinds, and statement snippets of at most three lines (whitespace collapsed, at most 182 characters). The side panel links to GitHub at the pinned commit for the full source.
 
 ## Performance
 

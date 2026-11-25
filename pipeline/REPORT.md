@@ -115,4 +115,4 @@ Landscape data (grid + zeros): 3.74 MB gzipped (budget 6 MB). All data: 18.92 MB
 
 ## License note
 
-The submission has no license. `public/data/` holds only derived metadata: module paths, line counts, import edges, declaration names and kinds, and statement snippets of at most three lines (whitespace collapsed, at most 180 characters). The app links to GitHub at the pinned commit for source.
+The submission has no license. `public/data/` holds only derived metadata: module paths, line counts, import edges, declaration names and kinds, and statement snippets of at most three lines (whitespace collapsed, at most 182 characters). The app links to GitHub at the pinned commit for source.

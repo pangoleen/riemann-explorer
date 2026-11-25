@@ -22,12 +22,27 @@ export const softLog = (L: number) => 0.5 * Math.log(Math.exp(2 * L) + HEIGHT_EP
 /** Landscape-local point the group shrinks toward in the world transition. */
 export const LANDSCAPE_CENTRE = new THREE.Vector3(0, 0, 50);
 
+/** Float16 → Float32 for every bit pattern (decoding 1M values through a call each took seconds). */
+let HALF_LUT: Float32Array | null = null;
+function halfLut(): Float32Array {
+  if (HALF_LUT) return HALF_LUT;
+  const lut = new Float32Array(65536);
+  for (let h = 0; h < 65536; h++) {
+    const s = h & 0x8000 ? -1 : 1;
+    const e = (h >> 10) & 0x1f;
+    const f = h & 0x3ff;
+    lut[h] = e === 0 ? s * 2 ** -14 * (f / 1024) : e === 31 ? (f ? NaN : s * Infinity) : s * 2 ** (e - 15) * (1 + f / 1024);
+  }
+  return (HALF_LUT = lut);
+}
+
 export class ZetaGrid {
   readonly logAbs: Float32Array;
   constructor(readonly header: GridHeader, readonly half: Uint16Array) {
     const n = header.width * header.height;
+    const lut = halfLut();
     this.logAbs = new Float32Array(n);
-    for (let i = 0; i < n; i++) this.logAbs[i] = THREE.DataUtils.fromHalfFloat(half[2 * i]);
+    for (let i = 0; i < n; i++) this.logAbs[i] = lut[half[2 * i]];
   }
   /** Bilinear log|ζ(σ+it)| from the grid (the same values the mesh uses). */
   logAbsAt(sigma: number, t: number): number {

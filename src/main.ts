@@ -62,6 +62,7 @@ export class App {
   story: import('./story/player').StoryPlayer | null = null;
 
   constructor() {
+    performance.mark('re:ctor');
     const canvas = $<HTMLCanvasElement>('gl');
     this.renderer = new THREE.WebGLRenderer({
       canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: params.capture,
@@ -69,6 +70,7 @@ export class App {
     this.renderer.setClearColor(0x000000, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
+    performance.mark('re:gl');
     this.camera = new THREE.PerspectiveCamera(50, 1, 0.05, 2000);
     this.camera.position.set(14, 16, -34);
     this.controls = new OrbitControls(this.camera, canvas);
@@ -88,12 +90,15 @@ export class App {
   }
 
   async init(): Promise<void> {
+    performance.mark('re:init');
     const [grid, zeros] = await Promise.all([
       loadGrid(),
       fetch('/data/zeros.json').then((r) => r.json() as Promise<{ gammas: number[] }>),
     ]);
+    performance.mark('re:data');
     this.gammas = zeros.gammas;
     this.landscape = new Landscape(grid, this.gammas, { lowQuality: params.lowQuality });
+    performance.mark('re:landscape');
     this.scene.add(this.landscape.group);
     this.Z = makeZ((t) => grid.zLowT(t));
     this.hud = new Hud(this.Z, this.gammas);
@@ -101,6 +106,7 @@ export class App {
     this.resize();
     this.bindUi();
     $('loading').remove();
+    performance.mark('re:ui');
 
     if (params.story) {
       const { StoryPlayer } = await import('./story/player');
@@ -143,6 +149,7 @@ export class App {
     } else {
       this.renderer.setAnimationLoop(() => this.step(Math.min(this.clock.getDelta(), 1 / 20)));
     }
+    performance.mark('re:ready');
     window.__ready = true;
   }
 
@@ -361,7 +368,12 @@ export class App {
     if (this.galaxy && this.blend > 0) this.galaxy.update(this.camera, this.time, this.mode === 'story' ? null : this.pointer);
     this.labels.update(this.camera, this.W, this.H);
     this.composer.render();
+    if (!this.firstFrame) {
+      this.firstFrame = true;
+      performance.mark('re:first-frame');
+    }
   }
+  private firstFrame = false;
 
   private applyBlend(w: number): void {
     const s = THREE.MathUtils.lerp(1, 0.0008, easeInOut(THREE.MathUtils.clamp(w * 1.25, 0, 1)));
