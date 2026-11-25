@@ -95,7 +95,7 @@ The About card and README both say no code or data from the prior projects is us
 ## 7. Links
 
 - Live site: **https://riemann-explorer-psi.vercel.app**. HTTP 200. Headless Chrome loads it and the full galaxy check passes (search, fly-to, click, panel, GitHub link 200, pick 1.6 ms, no page errors).
-- Repo: **https://github.com/pangoleen/riemann-explorer**. It is **PRIVATE**, as the brief asked ("the private GitHub repo"). It loads for the account owner (`gh repo view` OK, last push 17:13 UTC). An anonymous request returns **404**. **It is not public.** Make it public in GitHub settings if you want to link it in the post.
+- Repo: **https://github.com/pangoleen/riemann-explorer**. Made **PUBLIC** at 17:33 UTC at the owner's request; an anonymous request returns **HTTP 200**. Before the change, the tracked files were checked: no secrets in the history, no `.lean` files, no snippet shards (those are gitignored), one author. `POST.md` (the draft posts) is in the repo and is now public too.
 
 ## 8. Video
 
@@ -129,14 +129,17 @@ Caption 4 says "Last week". That is true only if you post between 23 and 29 Nov 
 
 ## 9. Build time
 
-From git: first commit `0a4608d` at **2026-11-25 16:35:26 UTC**, last commit `61da2ee` at 17:13:22 UTC. Report written 17:30 UTC. **First commit to now: 0 h 55 min (0.92 h).** Work before the first commit (fetching sources, writing the pipeline, computing the grid) is not in git; its length is **UNVERIFIED** from git timestamps.
+- First commit `0a4608d` (M1): **2026-11-25 16:35:26 UTC**.
+- M5 deliverables done (repo public): **17:33 UTC**.
+- **First commit to repo going public: 0 h 58 min.**
+- Work began earlier: the Lean source checkout folder was created at **16:24:45 UTC** (filesystem timestamp, not git). **Start of work to now: about 1 h 08 min.** The brief budgeted about 5 h.
 
 ## 10. Known issues
 
 1. **Lighthouse performance is 73, below the target of 80.** Desktop preset, live site. Accessibility is 100, best practices 100, LCP 0.6 s, CLS 0, but total blocking time is 440 ms. Diagnosis: in headless Chrome, creating the WebGL context (`new THREE.WebGLRenderer`) blocks the main thread for about 5.4 s, measured with performance marks. I have not checked whether this happens in a normal, visible Chrome window: **UNVERIFIED**. Not fixed.
 2. **Performance targets measured only on an M1 Max**, at 1920×1080 with a GPU sync per frame: landscape 4.7 ms, galaxy 3.4 ms. 60 fps on a base M1 MacBook Pro and 30 fps on integrated graphics: **UNVERIFIED**.
 3. **"First meaningful paint under 2 s"**: Lighthouse LCP is 0.6 s, but that is a text element. The time until the 3D landscape is first drawn is affected by issue 1. **UNVERIFIED** in a real browser.
-4. **A stray Vercel project (resolved).** One deploy went to a new project named `dist`, because the build wiped the project link. It was deleted at 17:38 UTC with the owner's approval; its alias now returns 404. `pnpm run deploy` now links the right project every time.
+4. **A stray Vercel project (resolved).** One deploy went to a new project named `dist`, because the build wiped the project link. It was deleted at 17:32 UTC with the owner's approval; its alias now returns 404. `pnpm run deploy` now links the right project every time.
 5. **Approximations (documented in the README):**
    - Surface height is ½·log(|ζ|² + ε²) with ε = 0.16, not raw log|ζ|. The minima are at exactly the same points; without this, the pits are too narrow to see.
    - Below t = 100, Z(t) uses Euler–Maclaurin, not Riemann–Siegel. C0–C4 alone is 1.5e-5 off at t = 10. Below t = 10 it uses the grid.
