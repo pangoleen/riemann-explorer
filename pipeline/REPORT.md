@@ -90,8 +90,8 @@ Lean FRO / Mathlib Initiative: “17 million lines of code” — consistent wit
 
 ## Galaxy layout
 
-- Groups: second-level directories (343) plus top-level files. networkx `spring_layout`, 3D, seed 7, edge weight log1p(imports between groups). `Main` is pinned at the origin.
-- Modules: Gaussian around their third-level directory centre, radius 0.085·√count, pushed outward by 0.25 per import level from `Main`, y squashed by 0.42.
+- Groups: second-level directories (343) plus top-level files. networkx `spring_layout` in the disc plane (2D), seed 7, edge weight log1p(imports between groups). `Main` is pinned at the origin. A spiral twist (1.1 rad at the 95th-percentile radius) is applied for the look; it keeps neighbours together.
+- Modules: Gaussian around their third-level directory centre, radius 0.12·√count, pushed outward by 0.22 per import level from `Main`, y squashed by 0.32.
 - Point size: log(lines). Colour: top-level library.
 
 ## Asset sizes
@@ -103,14 +103,15 @@ Lean FRO / Mathlib Initiative: “17 million lines of code” — consistent wit
 | galaxy_index.json | 0.00 MB | 0.00 MB |
 | galaxy_meta.bin | 0.70 MB | 0.27 MB |
 | galaxy_modules.json | 6.47 MB | 1.27 MB |
-| galaxy_positions.bin | 2.10 MB | 1.95 MB |
+| galaxy_positions.bin | 2.10 MB | 1.96 MB |
+| stats.json | 0.00 MB | 0.00 MB |
 | zeros.json | 0.00 MB | 0.00 MB |
 | zeta_grid.bin | 4.24 MB | 3.74 MB |
 | zeta_grid.json | 0.00 MB | 0.00 MB |
 | galaxy_details/ (88 shards) | 46.27 MB | 10.26 MB |
-| **Total data** | | **18.91 MB** |
+| **Total data** | | **18.92 MB** |
 
-Landscape data (grid + zeros): 3.74 MB gzipped (budget 6 MB). All data: 18.91 MB (budget 25 MB, including JS and fonts).
+Landscape data (grid + zeros): 3.74 MB gzipped (budget 6 MB). All data: 18.92 MB (budget 25 MB, including JS and fonts).
 
 ## License note
 

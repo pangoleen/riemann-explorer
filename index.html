@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Riemann Explorer — the zeta function and the Lean proof</title>
+    <meta name="description" content="Fly the critical line of the Riemann zeta function, then explore all 175,187 modules of the Lean 4 proof of the Riemann Hypothesis." />
+    <meta property="og:title" content="Riemann Explorer" />
+    <meta property="og:description" content="The zeta landscape and the 175,187-module Lean proof of RH, explorable in 3D." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='6' fill='%23ffd27a'/%3E%3C/svg%3E" />
+    <link rel="preload" href="/data/zeta_grid.bin" as="fetch" crossorigin />
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="gl"></canvas>
+      <div id="labels" aria-hidden="true"></div>
+
+      <header id="topbar" class="chrome">
+        <div class="brand">Riemann Explorer</div>
+        <nav class="worlds" role="tablist">
+          <button id="btn-landscape" role="tab" aria-selected="true">Zeta landscape</button>
+          <button id="btn-galaxy" role="tab" aria-selected="false">Proof galaxy</button>
+        </nav>
+        <div class="actions">
+          <button id="btn-fly" class="accent">Fly the critical line</button>
+          <a id="btn-story" class="btn" href="?story=1">Story mode</a>
+          <button id="btn-about">About</button>
+        </div>
+      </header>
+
+      <section id="hud" aria-live="polite">
+        <canvas id="zplot" width="900" height="150" aria-label="Hardy Z(t) near the camera"></canvas>
+        <div class="hud-text">
+          <div class="hud-t">t = <span id="hud-t">0.00</span></div>
+          <div class="hud-count">Zeros passed: <b id="hud-k">0</b></div>
+          <div class="hud-nt">Riemann–von Mangoldt estimate N(T) ≈ θ(T)/π + 1 = <span id="hud-nt">—</span></div>
+        </div>
+      </section>
+
+      <section id="search" class="chrome galaxy-only">
+        <input id="search-input" type="search" placeholder="Search 175,187 modules (e.g. MainConclusion, Eisenstein)" autocomplete="off" spellcheck="false" aria-label="Search modules" />
+        <div id="search-meta"></div>
+        <ol id="search-results"></ol>
+      </section>
+
+      <aside id="panel" class="chrome galaxy-only" hidden>
+        <button class="close" id="panel-close" aria-label="Close">×</button>
+        <nav id="panel-crumbs" class="crumbs"></nav>
+        <h2 id="panel-name"></h2>
+        <dl class="facts">
+          <div><dt>Lines</dt><dd id="panel-lines"></dd></div>
+          <div><dt>Imports</dt><dd id="panel-imports"></dd></div>
+          <div><dt>Imported by</dt><dd id="panel-importers"></dd></div>
+          <div><dt>Depth from Main</dt><dd id="panel-depth"></dd></div>
+          <div><dt>Declarations</dt><dd id="panel-ndecl"></dd></div>
+        </dl>
+        <div id="panel-decls"></div>
+        <pre id="panel-snippet"></pre>
+        <a id="panel-link" target="_blank" rel="noopener">View source on GitHub ↗</a>
+        <p class="legend"><span class="sw imp"></span>imports <span class="sw by"></span>imported by</p>
+      </aside>
+
+      <section id="stats" class="chrome galaxy-only">
+        <h3>The Lean proof</h3>
+        <dl>
+          <div><dt>Modules</dt><dd id="st-modules">…</dd></div>
+          <div><dt>Lines</dt><dd id="st-lines">…</dd></div>
+          <div><dt>Import edges</dt><dd id="st-edges">…</dd></div>
+          <div><dt>Longest import chain</dt><dd id="st-chain">…</dd></div>
+        </dl>
+        <p class="verified">Verified by the
+          <a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener">Lean FRO &amp; Mathlib Initiative</a>
+          and <a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener">MIT (Sutherland)</a>.
+          Counts computed from the source by <code>pipeline/</code>.</p>
+        <div id="legend"></div>
+      </section>
+
+      <div id="tooltip" role="tooltip" hidden></div>
+
+      <div id="story-hud" class="story-only" aria-hidden="true">
+        <canvas id="story-zplot" width="1400" height="260"></canvas>
+        <div class="story-counter">Zeros passed <b id="story-k">0</b></div>
+      </div>
+
+      <div id="leancard" aria-hidden="true">
+        <div class="lc-file">Mathlib/NumberTheory/LSeries/RiemannZeta.lean</div>
+<pre><span class="kw">def</span> <span class="nm">RiemannHypothesis</span> : <span class="ty">Prop</span> :=
+  ∀ (s : ℂ) (_ : riemannZeta s = 0) (_ : ¬∃ n : ℕ, s = -2 * (n + 1)) (_ : s ≠ 1),
+    s.re = 1 / 2</pre>
+        <div class="lc-proof"><span class="kw">theorem</span> <span class="nm">riemannHypothesis</span> : <span class="ty">RiemannHypothesis</span> := rhOfAll</div>
+        <div class="lc-src">src/Main.lean · Alpöge, with Claude · 20 Nov 2026</div>
+      </div>
+
+      <div id="captions" aria-live="polite"><p id="caption-text"></p></div>
+      <div id="fade"></div>
+
+      <div id="loading">Loading the zeta landscape…</div>
+    </div>
+
+    <dialog id="about">
+      <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+      <h2>About Riemann Explorer</h2>
+      <p>This is a visualisation. It does not explain why the proof works, and the zeta landscape does not show the proof's method.</p>
+      <h3>What you see</h3>
+      <p><b>Zeta landscape.</b> Height is log|ζ(σ+it)|, colour is arg ζ, over σ ∈ [−1, 2], t ∈ [0, 100]. The critical strip 0 &lt; σ &lt; 1 is framed; the critical line σ = ½ glows. Markers sit at the first 200 nontrivial zeros. The Hardy Z(t) plot and counter are computed live in your browser.</p>
+      <p><b>Proof galaxy.</b> One star per module of the Lean 4 proof (Levent Alpöge, working with Claude, 20 Nov 2026). Colour = top-level library, size = log(lines). The layout groups directories by imports. Every module is in <code>Main</code>'s import closure, so imports say little about logical dependency, and directory names do not describe contents.</p>
+      <h3>Sources</h3>
+      <ul>
+        <li>Announcement: <a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener">alpo.ge/remark.pdf</a></li>
+        <li>Source at the pinned commit: <a href="https://github.com/leanprover-community/riemann-hypothesis/tree/40e56bab026552e089d7afcfeff08d2defb9c005" target="_blank" rel="noopener">leanprover-community/riemann-hypothesis @ 40e56ba</a></li>
+        <li><a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener">Lean FRO and Mathlib Initiative statement</a></li>
+        <li><a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener">MIT verification page (Andrew Sutherland)</a></li>
+        <li>Zeros: mpmath, checked against <a href="https://www-users.cse.umn.edu/~odlyzko/zeta_tables/" target="_blank" rel="noopener">Odlyzko's tables</a></li>
+      </ul>
+      <h3>Prior visualisations (credit)</h3>
+      <ul>
+        <li><a href="https://pengowray.github.io/riemann-zeta-proof-visualizer/" target="_blank" rel="noopener">Treemap</a> by pengowray</li>
+        <li><a href="https://deeptheory-labs.github.io/GRH/" target="_blank" rel="noopener">3D proof map</a> by DeepTheory Labs</li>
+        <li><a href="https://github.com/jae-63/rh-alpoge-blueprint" target="_blank" rel="noopener">Blueprint</a> by jae-63</li>
+      </ul>
+      <p>No code or data from these projects is used here. All counts come from our own pipeline.</p>
+      <h3>License note</h3>
+      <p>The submission was published without a license. This site ships only derived metadata (paths, line counts, imports, declaration names, statement snippets of at most three lines) and links to GitHub for the source.</p>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

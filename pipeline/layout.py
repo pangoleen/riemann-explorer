@@ -37,10 +37,12 @@ CACHE = ROOT / ".cache"
 OUT = ROOT / "public" / "data"
 SEED = 7
 SHARD = 2000
-GROUP_SCALE = 150.0     # world radius of the group layout
-CLUSTER_K = 0.085       # group radius = CLUSTER_K * sqrt(count)
-DEPTH_PUSH = 0.25       # outward push per import level from Main
-FLATTEN_Y = 0.42        # squash the galaxy into a thick disc
+GROUP_SCALE = 175.0     # world radius (95th percentile) of the group layout
+CLUSTER_K = 0.12        # group radius = CLUSTER_K * sqrt(count)
+DEPTH_PUSH = 0.22       # outward push per import level from Main
+FLATTEN_Y = 0.32        # squash clusters into a disc
+DISC_Y = 0.08           # vertical spread of group centres, as a fraction of their radius
+TWIST = 1.1             # spiral twist (radians) at the 95th-percentile radius
 
 LIBRARIES = [
     "Development", "Formalism", "GroundTheory", "ReciprocityTheory", "CompanionTheory",
@@ -93,21 +95,30 @@ def main() -> None:
         G.add_edge(a, b, weight=math.log1p(w))
 
     lib_angle = {lib: 2 * math.pi * i / 6 for i, lib in enumerate(LIBRARIES[:6])}
+    # 2D spring layout in the disc plane; each library starts on its own arm angle
     init = {}
     for g in G.nodes:
         lib = g.split(".")[0]
         ang = lib_angle.get(lib, 0.0)
-        jitter = unit_hash(g, "init")
+        jitter = unit_hash(g, "init")[[0, 2]]
         rad = 0.15 if lib in ("Main", "Statements", "Supplements", "BuildAid") else 0.7
-        init[g] = np.array([rad * math.cos(ang), 0.0, rad * math.sin(ang)]) + 0.25 * jitter
-    init["Main"] = np.zeros(3)
-    pos = nx.spring_layout(
-        G, dim=3, pos=init, fixed=["Main"], weight="weight", k=0.5, iterations=200, seed=SEED
+        init[g] = np.array([rad * math.cos(ang), rad * math.sin(ang)]) + 0.25 * jitter
+    init["Main"] = np.zeros(2)
+    pos2 = nx.spring_layout(
+        G, dim=2, pos=init, fixed=["Main"], weight="weight", k=0.45, iterations=300, seed=SEED
     )
-    P = np.array([pos[g] for g in G.nodes])
-    P -= pos["Main"]
-    scale = GROUP_SCALE / np.percentile(np.linalg.norm(P, axis=1), 95)
-    centre = {g: (pos[g] - pos["Main"]) * scale * np.array([1, FLATTEN_Y, 1]) for g in G.nodes}
+    P = np.array([pos2[g] - pos2["Main"] for g in G.nodes])
+    r95 = np.percentile(np.linalg.norm(P, axis=1), 95)
+    centre = {}
+    for g in G.nodes:
+        x, z = (pos2[g] - pos2["Main"]) / r95 * GROUP_SCALE
+        r = math.hypot(x, z)
+        th = TWIST * r / GROUP_SCALE  # spiral twist grows with radius
+        c, s_ = math.cos(th), math.sin(th)
+        x, z = c * x - s_ * z, s_ * x + c * z
+        y = unit_hash(g, "y")[1] * r * DISC_Y
+        centre[g] = np.array([x, y, z])
+    centre["Main"] = np.zeros(3)
 
     # sub-group centres around their group centre
     subs = Counter(sub_of(r["name"]) for r in rows)

@@ -226,10 +226,11 @@ def main() -> None:
 
     w("## Galaxy layout")
     w("")
-    w("- Groups: second-level directories (343) plus top-level files. networkx `spring_layout`, 3D, seed 7, "
-      "edge weight log1p(imports between groups). `Main` is pinned at the origin.")
-    w("- Modules: Gaussian around their third-level directory centre, radius 0.085·√count, "
-      "pushed outward by 0.25 per import level from `Main`, y squashed by 0.42.")
+    w("- Groups: second-level directories (343) plus top-level files. networkx `spring_layout` in the disc plane "
+      "(2D), seed 7, edge weight log1p(imports between groups). `Main` is pinned at the origin. A spiral twist "
+      "(1.1 rad at the 95th-percentile radius) is applied for the look; it keeps neighbours together.")
+    w("- Modules: Gaussian around their third-level directory centre, radius 0.12·√count, "
+      "pushed outward by 0.22 per import level from `Main`, y squashed by 0.32.")
     w("- Point size: log(lines). Colour: top-level library.")
     w("")
 
