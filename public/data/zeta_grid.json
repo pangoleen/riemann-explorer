@@ -1,0 +1,22 @@
+{
+  "format": "float16 RG, row-major, rows = t, columns = sigma",
+  "channels": [
+    "log|zeta| clamped",
+    "arg zeta (radians, -pi..pi)"
+  ],
+  "width": 259,
+  "height": 4097,
+  "sigma": [
+    -1.0,
+    2.0
+  ],
+  "t": [
+    0.0,
+    100.0
+  ],
+  "logClamp": [
+    -6.0,
+    4.0
+  ],
+  "dps": 15
+}

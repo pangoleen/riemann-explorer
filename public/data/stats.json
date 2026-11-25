@@ -1,0 +1,15 @@
+{
+  "modules": 175187,
+  "lines": 17374215,
+  "importEdges": 753261,
+  "importLines": 909822,
+  "longestChain": 203,
+  "declarations": 1061425,
+  "maxDepth": 43,
+  "mitModules": 175187,
+  "mitMatched": 175187,
+  "zerosShown": 200,
+  "zerosBelow100": 29,
+  "commit": "40e56bab026552e089d7afcfeff08d2defb9c005",
+  "generated": "2026-11-25"
+}

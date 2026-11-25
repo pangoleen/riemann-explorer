@@ -1,0 +1,15 @@
+node_modules/
+dist/
+out/
+.cache/
+.venv/
+__pycache__/
+.pytest_cache/
+*.log
+.DS_Store
+.vercel
+# generated large assets (pipeline/run_all.sh regenerates them)
+public/data/*.bin
+public/data/galaxy_modules.json
+public/data/galaxy_details/
+test-results/
