@@ -7,7 +7,7 @@
 //   pnpm capture --only=0,8,20   stills at those seconds → out/preview/
 //   options: --fps=60 --from=0 --to=45 --keep-frames --headed
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
@@ -37,6 +37,12 @@ const browser = await chromium.launch({
 });
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 page.on('pageerror', (e) => console.error('[pageerror]', e.message));
+// CDP screenshot with optimizeForSpeed: same pixels, faster PNG encoding than page.screenshot
+const cdp = await page.context().newCDPSession(page);
+const grab = async (path: string) => {
+  const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true, captureBeyondViewport: false });
+  writeFileSync(path, Buffer.from(data, 'base64'));
+};
 await page.goto(url);
 await page.waitForFunction(() => (window as any).__ready === true, null, { timeout: 120000 });
 await page.evaluate(() => document.fonts.ready);
@@ -62,7 +68,7 @@ if (only) {
   const t0 = Date.now();
   for (let i = n0; i < n1; i++) {
     await page.evaluate((x) => (window as any).__renderFrame(x), i / fps);
-    await page.screenshot({ path: join(FRAMES, `${String(i - n0).padStart(5, '0')}.png`) });
+    await grab(join(FRAMES, `${String(i - n0).padStart(5, '0')}.png`));
     if ((i - n0) % 120 === 0) {
       const done = i - n0 + 1;
       const rate = done / ((Date.now() - t0) / 1000);

@@ -50,7 +50,7 @@ pnpm capture
 pnpm capture:4x5
 ```
 
-These write `out/riemann-explorer.mp4` (1920×1080) and `out/riemann-explorer-4x5.mp4` (1080×1350): 60 fps, 45 s, H.264, `-crf 16 -pix_fmt yuv420p`. The script starts its own Vite server and drives the installed Google Chrome (headless, Metal GPU) with Playwright. Time comes from the frame index, not the clock, so no frame can drop. PNG frames go to `out/frames/` and are deleted after encoding; add `--keep-frames` to keep them. `--only=8,20,38` renders stills to `out/preview/`.
+These write `out/riemann-explorer.mp4` (1920×1080) and `out/riemann-explorer-4x5.mp4` (1080×1350): 60 fps, 45 s, H.264, `-crf 16 -pix_fmt yuv420p`. The script starts its own Vite server and drives the installed Google Chrome (headless, Metal GPU) with Playwright. Time comes from the frame index, not the clock, so no frame can drop. PNG frames go to `out/frames/` and are deleted after encoding; add `--keep-frames` to keep them. `--only=8,20,38` renders stills to `out/preview/`. On an M1 Max the 2,700 frames take about 7 minutes, plus about a minute to encode.
 
 Edit the script in [`src/story/timeline.ts`](src/story/timeline.ts): camera keys (Catmull-Rom with per-segment easing), captions and scalar tracks (fade, HUD, galaxy reveal, Lean card).
 
@@ -80,6 +80,7 @@ The last two need `pnpm dev` running.
 - **Visual alignment** (`scripts/visual-test.ts`): a top-down screenshot of the surface and a separate screenshot of the markers. Every marker is within 0.71 px of a surface minimum (tolerance 2 px).
 - **Galaxy end to end** (`scripts/e2e-galaxy.ts`): a search for "MainConclusion" flies there, a click opens the right path, the GitHub link returns 200, and a pick takes about 2 ms.
 - **Stats** (`tests/stats.test.ts`): every number on the stats card appears in `pipeline/REPORT.md`.
+- **Story** (`tests/story.test.ts`): the timeline is deterministic, and the camera speed never changes by more than 3 units/s between consecutive 60 fps frames (no stop-start at keys).
 
 ## How the maths runs
 

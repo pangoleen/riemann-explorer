@@ -22,12 +22,18 @@ export interface StoryState {
   streak: number;
 }
 
-const ease = (e: Ease, x: number): number => {
+/** Cubic Hermite time warp on [0, 1] with end slopes m0, m1 (u(0) = 0, u(1) = 1). */
+const hermite = (x: number, m0: number, m1: number): number => {
+  const x2 = x * x;
+  const x3 = x2 * x;
+  return (x3 - 2 * x2 + x) * m0 + (-2 * x3 + 3 * x2) + (x3 - x2) * m1;
+};
+const fixedEase = (e: Ease, x: number): number | null => {
   switch (e) {
     case 'linear': return x;
     case 'in': return x * x * x;
     case 'out': return 1 - Math.pow(1 - x, 3);
-    default: return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    default: return null; // 'inOut': smooth, with speeds matched at both keys
   }
 };
 
@@ -51,6 +57,8 @@ export class StoryPlayer {
   private lookCurve: THREE.CatmullRomCurve3;
   private fov: number[] = [];
   private blend: number[] = [];
+  /** Per segment: Hermite end slopes, so the camera's world speed is continuous at every key. */
+  private slopes: [number, number][] = [];
 
   constructor(private k: Key[] = keys) {
     this.posCurve = new THREE.CatmullRomCurve3(k.map((x) => new THREE.Vector3(...x.pos)), false, 'centripetal');
@@ -63,6 +71,47 @@ export class StoryPlayer {
       this.fov.push(f);
       this.blend.push(b);
     }
+    this.computeSlopes();
+  }
+
+  private computeSlopes(): void {
+    const k = this.k;
+    const n = k.length - 1;
+    const curve = this.posCurve;
+    // |dP/du| at the ends of segment i (u = local parameter), and its arc length
+    const dP = (i: number, u: number) => {
+      const h = 1e-4;
+      const a = curve.getPoint(Math.max(0, (i + u - h)) / n);
+      const b = curve.getPoint(Math.min(n, (i + u + h)) / n);
+      return a.distanceTo(b) / ((Math.min(n, i + u + h) - Math.max(0, i + u - h)));
+    };
+    const len: number[] = [];
+    for (let i = 0; i < n; i++) {
+      let L = 0;
+      let prev = curve.getPoint(i / n);
+      for (let s = 1; s <= 64; s++) {
+        const p = curve.getPoint((i + s / 64) / n);
+        L += p.distanceTo(prev);
+        prev = p;
+      }
+      len.push(L);
+    }
+    const T = (i: number) => k[i + 1].t - k[i].t;
+    const isLinear = (i: number) => i >= 0 && i < n && k[i].ease === 'linear';
+    // world speed at each key
+    const speed: number[] = [];
+    for (let j = 0; j <= n; j++) {
+      if (isLinear(j - 1)) speed.push(dP(j - 1, 1 - 1e-3) / T(j - 1));
+      else if (isLinear(j)) speed.push(dP(j, 1e-3) / T(j));
+      else if (j === 0) speed.push(len[0] / T(0));
+      else if (j === n) speed.push(len[n - 1] / T(n - 1));
+      else speed.push(0.5 * (len[j - 1] / T(j - 1) + len[j] / T(j)));
+    }
+    for (let i = 0; i < n; i++) {
+      const m0 = (speed[i] * T(i)) / Math.max(1e-6, dP(i, 1e-3));
+      const m1 = (speed[i + 1] * T(i)) / Math.max(1e-6, dP(i, 1 - 1e-3));
+      this.slopes.push([Math.min(3, m0), Math.min(3, m1)]); // ≤ 3 keeps u(x) monotone
+    }
   }
 
   state(tRaw: number): StoryState {
@@ -74,7 +123,7 @@ export class StoryPlayer {
     }
     const span = k[i + 1].t - k[i].t;
     const x = THREE.MathUtils.clamp((t - k[i].t) / span, 0, 1);
-    const u = ease(k[i].ease ?? 'inOut', x);
+    const u = fixedEase(k[i].ease ?? 'inOut', x) ?? hermite(x, this.slopes[i][0], this.slopes[i][1]);
     const n = k.length - 1;
     const pos = this.posCurve.getPoint((i + u) / n);
     const look = this.lookCurve.getPoint((i + u) / n);

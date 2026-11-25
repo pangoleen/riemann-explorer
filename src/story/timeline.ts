@@ -5,8 +5,10 @@
 // The galaxy is centred on Main.lean at the origin.
 //
 // Camera: Catmull-Rom through `keys` (pos and look separately). Each segment
-// uses the easing of the key it starts at ('inOut' by default, 'linear' for
-// constant-speed glides). fov and blend ease between keys too.
+// uses the easing of the key it starts at: 'linear' for constant-speed glides;
+// the default ('inOut') eases smoothly and matches the camera's speed at both
+// keys, so there is no stop-start where segments meet. fov and blend follow
+// the same timing.
 
 export type V3 = [number, number, number];
 export type Ease = 'inOut' | 'linear' | 'in' | 'out';
@@ -53,14 +55,14 @@ export const keys: Key[] = [
   { t: 21.6, pos: [0, 3.6, Z(88)], look: [0, -0.8, Z(101)] },
   // 22–30 s: pull up and back; the landscape shrinks into the Main.lean star
   { t: 24.6, pos: [8, 30, Z(132)], look: [0, 0, 0], fov: 50, blend: 0 },
-  { t: 28.4, pos: [18, 46, 96], look: [0, 0, 0], blend: 1 },
-  { t: 31, pos: [62, 44, 122], look: [-6, 0, 14] },
+  { t: 28.4, pos: [24, 54, 116], look: [0, 0, 0], blend: 1 },
+  { t: 31, pos: [58, 46, 132], look: [-6, 0, 14] },
   // 30–40 s: fly through the galaxy into Development/AbelianVarietyTheory
   { t: 35, pos: [8, 22, 96], look: [-14, 0, 19], fov: 58 },
   { t: 38.6, pos: [-13, 2, 34], look: [-18, -1, 6] },
   // 40–45 s: settle under the Mathlib statement
-  { t: 41.2, pos: [-44, 26, 118], look: [-12, 0, 14], fov: 50 },
-  { t: 45, pos: [-52, 30, 132], look: [-12, 0, 14] },
+  { t: 41.2, pos: [-30, 14, 72], look: [-12, 0, 12], fov: 50 },
+  { t: 45, pos: [-36, 18, 86], look: [-12, 0, 12] },
 ];
 
 export const captions: Caption[] = [
