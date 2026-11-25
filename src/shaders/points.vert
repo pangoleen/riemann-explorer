@@ -13,14 +13,14 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   float r = length(position);
   float appear = smoothstep(r, r + 25.0, uReveal);
-  float worldSize = 0.10 + aSize * 0.055;
+  float worldSize = 0.05 + aSize * 0.032;
   float px = worldSize * uScale / max(-mv.z, 0.01);
   float alpha = appear * uBright;
   // sub-pixel stars: keep a 1.6 px footprint and fade instead of shrinking (no shimmer)
   if (px < 1.6) { alpha *= px / 1.6; px = 1.6; }
-  px = min(px, 48.0);
+  px = min(px, 26.0);
   // stars very close to the camera fade out so fly-throughs stay readable
-  alpha *= smoothstep(0.4, 3.0, -mv.z);
+  alpha *= smoothstep(0.6, 5.0, -mv.z);
   gl_PointSize = px * uPixelRatio;
   vColor = uColors[int(aLib + 0.5)];
   vAlpha = alpha;

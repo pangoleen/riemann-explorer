@@ -39,7 +39,7 @@ export function mountGalaxyUi(app: App, g: Galaxy): void {
   let sel = 0;
   let qSeq = 0;
 
-  const flyToIndex = (i: number, dist = 9) => {
+  const flyToIndex = (i: number, dist = 14) => {
     const p = g.positionOf(i).applyMatrix4(g.group.matrixWorld);
     const dir = app.camera.position.clone().sub(app.controls.target).normalize();
     app.tweenTo(p.clone().addScaledVector(dir, dist), p, 1.8);

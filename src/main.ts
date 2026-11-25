@@ -153,6 +153,7 @@ export class App {
         this.scene.add(g.group);
         g.setResolution(this.W, this.H);
         g.addLabels(this.labels, () => this.blend > 0.02);
+        g.pick(this.camera, new THREE.Vector2(0, 0)); // compile the pick shader now, not on first click
         if (!params.story) {
           const ui = await import('./ui/galaxyUi');
           ui.mountGalaxyUi(this, g);
